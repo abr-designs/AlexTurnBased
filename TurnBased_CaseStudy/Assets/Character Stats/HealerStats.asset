@@ -12,12 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfabb3016063264f91efe820cff1255, type: 3}
   m_Name: HealerStats
   m_EditorClassIdentifier: 
-  attackType: 0
   health: 100
-  lightAttack: 1
-  lightDamage: {x: 5, y: 10}
-  heavyAttack: 0
-  heavyDamage: {x: 15, y: 25}
-  heal: 1
-  healAmount: {x: 0, y: 0}
-  block: 0
+  abilities:
+  - {fileID: 11400000, guid: b0b9f12a075bf434087c27181a448ebd, type: 2}
+  - {fileID: 11400000, guid: 4022826213f6d1542a2071c15e28c6c9, type: 2}
+  - {fileID: 11400000, guid: 70341a012fe6e6445ac4a2866c1f7c23, type: 2}

@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f457c801-3400-4df3-853a-9ce9ba53b860" name="Default Changelist" comment="" />
+    <list default="true" id="f457c801-3400-4df3-853a-9ce9ba53b860" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.TurnBased_CaseStudy/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TurnBased_CaseStudy/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.TurnBased_CaseStudy/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TurnBased_CaseStudy/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Character Stats/FighterStats.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Character Stats/FighterStats.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Character Stats/HealerStats.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Character Stats/HealerStats.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Plugins/RainbowAssets/RainbowFolders/Editor/Data/RainbowFoldersSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/RainbowAssets/RainbowFolders/Editor/Data/RainbowFoldersSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CharacterBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CharacterBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,40 +21,23 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Assets/Scripts/CharacterBase.cs">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/GameManager.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="12" column="4" lean-forward="true" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+            <state relative-caret-position="374">
+              <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
               <folding>
-                <marker date="1549405498817" expanded="false" signature="6:107" ph="..." />
-                <marker date="1549405498817" expanded="true" signature="151:394" ph="{...}" />
-                <marker date="1549405498817" expanded="true" signature="370:391" ph="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="29" column="18" selection-start-line="29" selection-start-column="18" selection-end-line="29" selection-end-column="18" />
-              <folding>
-                <marker date="1549404739435" expanded="false" signature="6:107" ph="..." />
-                <marker date="1549404739435" expanded="true" signature="248:960" ph="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Enums/STATE.cs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" selection-start-line="12" selection-end-line="12" />
-              <folding>
-                <marker date="1549403707011" expanded="true" signature="6:78" ph="..." />
-                <marker date="1549403707011" expanded="true" signature="103:160" ph="{...}" />
+                <marker date="1549590641428" expanded="true" signature="6:122" ph="..." />
+                <marker date="1549590641428" expanded="true" signature="244:3697" ph="{...}" />
+                <marker date="1549590641428" expanded="true" signature="272:382" ph="{...}" />
+                <marker date="1549590641428" expanded="true" signature="1667:1816" ph="/* --------------------------------------------------------------------------------------- ... */" />
+                <marker date="1549590641428" expanded="true" signature="1833:1903" ph="{...}" />
+                <marker date="1549590641428" expanded="false" signature="1961:2324" ph="{...}" />
+                <marker date="1549590641428" expanded="true" signature="2473:2889" ph="{...}" />
+                <marker date="1549590641428" expanded="true" signature="2513:2883" ph="{...}" />
+                <marker date="1549590641428" expanded="false" signature="2935:2956" ph="{...}" />
+                <marker date="1549590641428" expanded="false" signature="3116:3206" ph="{...}" />
+                <marker date="1549590641428" expanded="false" signature="3262:3283" ph="{...}" />
+                <marker date="1549590641428" expanded="false" signature="3476:3695" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -58,7 +51,10 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/CharacterBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0F0367E2-BACA-4509-821F-867BA72C797D/5c/061f4f88/List`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Enums/TYPE.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/SerializedObject/AbilityScriptableObject.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GameManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Enums/STATE.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
@@ -67,8 +63,10 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/Enums/TYPE.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Enums/STATE.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/CharacterStats.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/CharacterBase.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/SerializedObject/AbilityScriptableObject.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/GameManager.cs" />
       </list>
     </option>
   </component>
@@ -89,15 +87,15 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="FileSystemExplorer" />
-      <pane id="SolutionExplorer">
-        <option name="show-all-files" value="false" />
-      </pane>
-      <pane id="AssemblyExplorer" />
       <pane id="UnityExplorer">
         <option name="show-hidden-items" value="false" />
         <option name="show-project-names" value="true" />
       </pane>
+      <pane id="AssemblyExplorer" />
+      <pane id="SolutionExplorer">
+        <option name="show-all-files" value="false" />
+      </pane>
+      <pane id="FileSystemExplorer" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -143,12 +141,13 @@
       <option name="presentableId" value="Default" />
       <updated>1549402979284</updated>
       <workItem from="1549402982958" duration="37000" />
-      <workItem from="1549403147366" duration="2237000" />
+      <workItem from="1549403147366" duration="2501000" />
+      <workItem from="1549584814834" duration="4753000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2274000" />
+    <option name="totallyTimeSpent" value="7291000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -169,7 +168,6 @@
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Image Layers" order="4" />
       <window_info id="Capture Tool" order="5" />
-      <window_info anchor="bottom" id="Unity" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -186,6 +184,7 @@
       <window_info anchor="bottom" id="Terminal" order="13" />
       <window_info anchor="bottom" id="Event Log" order="14" side_tool="true" />
       <window_info anchor="bottom" id="Android Profiler" order="15" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Unity" order="16" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -219,43 +218,78 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CharacterStats.cs" />
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Enums/STATE.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
+        <state relative-caret-position="153">
           <caret line="12" selection-start-line="12" selection-end-line="12" />
           <folding>
-            <marker date="1549403707011" expanded="true" signature="6:78" ph="..." />
+            <marker date="1549403707011" expanded="false" signature="6:78" ph="..." />
             <marker date="1549403707011" expanded="true" signature="103:160" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/CharacterStats.cs">
+    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/0F0367E2-BACA-4509-821F-867BA72C797D/5c/061f4f88/List`1.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="17" column="34" lean-forward="true" selection-start-line="17" selection-start-column="34" selection-end-line="17" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="29" column="18" selection-start-line="29" selection-start-column="18" selection-end-line="29" selection-end-column="18" />
-          <folding>
-            <marker date="1549404739435" expanded="false" signature="6:107" ph="..." />
-            <marker date="1549404739435" expanded="true" signature="248:960" ph="{...}" />
-          </folding>
+        <state relative-caret-position="221">
+          <caret line="15" column="15" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/CharacterBase.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="12" column="4" lean-forward="true" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+        <state relative-caret-position="34">
+          <caret line="5" column="92" selection-start-line="5" selection-start-column="92" selection-end-line="5" selection-end-column="92" />
           <folding>
-            <marker date="1549405498817" expanded="false" signature="6:107" ph="..." />
-            <marker date="1549405498817" expanded="true" signature="151:394" ph="{...}" />
-            <marker date="1549405498817" expanded="true" signature="370:391" ph="{...}" />
+            <marker date="1549587863047" expanded="false" signature="6:107" ph="..." />
+            <marker date="1549587863047" expanded="true" signature="244:626" ph="{...}" />
+            <marker date="1549587863047" expanded="true" signature="569:623" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/SerializedObject/CharacterStats.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+          <folding>
+            <marker date="1549587705799" expanded="false" signature="6:107" ph="..." />
+            <marker date="1549587705799" expanded="true" signature="248:359" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/SerializedObject/AbilityScriptableObject.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="24" column="23" selection-start-line="24" selection-start-column="23" selection-end-line="24" selection-end-column="23" />
+          <folding>
+            <marker date="1549590144224" expanded="false" signature="6:78" ph="..." />
+            <marker date="1549590144224" expanded="true" signature="218:439" ph="{...}" />
+            <marker date="1549590144224" expanded="true" signature="464:517" ph="{...}" />
+            <marker date="1549590144224" expanded="true" signature="541:570" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/GameManager.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="43" lean-forward="true" selection-start-line="43" selection-end-line="43" />
+          <folding>
+            <marker date="1549590641428" expanded="true" signature="6:122" ph="..." />
+            <marker date="1549590641428" expanded="true" signature="244:3697" ph="{...}" />
+            <marker date="1549590641428" expanded="true" signature="272:382" ph="{...}" />
+            <marker date="1549590641428" expanded="true" signature="1667:1816" ph="/* --------------------------------------------------------------------------------------- ... */" />
+            <marker date="1549590641428" expanded="true" signature="1833:1903" ph="{...}" />
+            <marker date="1549590641428" expanded="false" signature="1961:2324" ph="{...}" />
+            <marker date="1549590641428" expanded="true" signature="2473:2889" ph="{...}" />
+            <marker date="1549590641428" expanded="true" signature="2513:2883" ph="{...}" />
+            <marker date="1549590641428" expanded="false" signature="2935:2956" ph="{...}" />
+            <marker date="1549590641428" expanded="false" signature="3116:3206" ph="{...}" />
+            <marker date="1549590641428" expanded="false" signature="3262:3283" ph="{...}" />
+            <marker date="1549590641428" expanded="false" signature="3476:3695" ph="{...}" />
           </folding>
         </state>
       </provider>
