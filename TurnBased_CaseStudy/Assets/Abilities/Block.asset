@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546f95999c66fce46a8854e3e8c2759f, type: 3}
   m_Name: Block
   m_EditorClassIdentifier: 
-  AbilityName: Block
+  Name: Block
+  Description: 
   AbilityType: 4
   TargetType: 2
   chance: 1

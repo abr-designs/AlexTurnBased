@@ -7,7 +7,7 @@ using UnityEngine;
 public class CharacterStats : ScriptableObject
 {
 
-    public int health;
+    public int startingHealth;
 
     public AbilityScriptableObject[] abilities = new AbilityScriptableObject[3];
 

@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546f95999c66fce46a8854e3e8c2759f, type: 3}
   m_Name: Bite
   m_EditorClassIdentifier: 
-  AbilityName: Bite
+  Name: Bite
+  Description: 
   AbilityType: 0
   TargetType: 0
   chance: 0.7

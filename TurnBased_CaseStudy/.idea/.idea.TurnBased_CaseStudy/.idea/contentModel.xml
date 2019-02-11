@@ -140,6 +140,7 @@
             <e p="TYPE.cs" t="Include" />
           </e>
           <e p="GameManager.cs" t="Include" />
+          <e p="PartMemberUIElement.cs" t="Include" />
           <e p="SerializedObject" t="Include">
             <e p="AbilityScriptableObject.cs" t="Include" />
             <e p="CharacterStats.cs" t="Include" />

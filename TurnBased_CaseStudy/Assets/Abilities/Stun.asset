@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546f95999c66fce46a8854e3e8c2759f, type: 3}
   m_Name: Stun
   m_EditorClassIdentifier: 
-  AbilityName: Stun
+  Name: Stun
+  Description: 
   AbilityType: 2
   TargetType: 0
   chance: 0.65

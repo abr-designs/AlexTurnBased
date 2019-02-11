@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfabb3016063264f91efe820cff1255, type: 3}
   m_Name: HealerStats
   m_EditorClassIdentifier: 
-  health: 100
+  startingHealth: 100
   abilities:
   - {fileID: 11400000, guid: b0b9f12a075bf434087c27181a448ebd, type: 2}
   - {fileID: 11400000, guid: 4022826213f6d1542a2071c15e28c6c9, type: 2}

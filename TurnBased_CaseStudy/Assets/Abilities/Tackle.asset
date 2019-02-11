@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546f95999c66fce46a8854e3e8c2759f, type: 3}
   m_Name: Tackle
   m_EditorClassIdentifier: 
-  AbilityName: Tackle
+  Name: Tackle
+  Description: 
   AbilityType: 1
   TargetType: 0
   chance: 0.45

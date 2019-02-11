@@ -8,6 +8,8 @@ public class CharacterBase : MonoBehaviour
 {
     public Transform Transform => transform;
 
+    public string characterName;
+
     protected STATE currentState;
 
     [SerializeField]
@@ -16,6 +18,10 @@ public class CharacterBase : MonoBehaviour
     [Required, SerializeField]
     protected CharacterStats stats;
 
+    public AbilityScriptableObject[] Abilities => stats.abilities;
+    public int CurrentHealth { get; private set; }
+    public int StartingHealth => stats.startingHealth;
+
     private new Transform transform;
     
     
@@ -23,6 +29,8 @@ public class CharacterBase : MonoBehaviour
     void Awake()
     {
         transform = gameObject.transform;
+
+        CurrentHealth = stats.startingHealth;
     }
 
 }
