@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 using Sirenix.OdinInspector;
@@ -22,7 +23,14 @@ public class GameManager : MonoBehaviour
 
     //---------------------------------------------------------------------------------------//
     
-    private GAMESTATE currentGamestate; 
+    private GAMESTATE currentGamestate;
+
+    [SerializeField, BoxGroup("Info"), ReadOnly]
+    private int selectedIndex;
+    [SerializeField, BoxGroup("Info"), ReadOnly]
+    private int selectedCharacterIndex;
+    [SerializeField, BoxGroup("Info"), ReadOnly]
+    private int selectedAbilityIndex;
     
     //---------------------------------------------------------------------------------------//
     
@@ -64,9 +72,9 @@ public class GameManager : MonoBehaviour
     
     [SerializeField,FoldoutGroup("Game Character")]
     private List<CharacterBase> enemyCharacters;
-
-    [SerializeField,FoldoutGroup("Game Character"), ReadOnly]
-    private int selectedIndex;
+    
+    [SerializeField, ReadOnly,BoxGroup("Info")]
+    private List<CharacterBase> possibleTargets;
     
     //---------------------------------------------------------------------------------------//
     
@@ -90,12 +98,12 @@ public class GameManager : MonoBehaviour
             MoveHorizontal(1);
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
-            MoveVertical(1);
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
             MoveVertical(-1);
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+            MoveVertical(1);
         
         if(Input.GetKeyDown(KeyCode.Return))
-            Select();
+            Enter();
         
         if(Input.GetKeyDown(KeyCode.Escape))
             Escape();
@@ -105,19 +113,24 @@ public class GameManager : MonoBehaviour
     private void SetGameState(GAMESTATE newState)
     {
         currentGamestate = newState;
+        selectedIndex = 0;
 
         switch (currentGamestate)
         {
             case GAMESTATE.CHARACTER_SELECT:
-                selectedIndex = 0;
+                SetActionButtonsActive(false);
                 HighlightCharacter(playerCharacters[selectedIndex]);
+                eventSystem.SetSelectedGameObject(null);
                 break;
             case GAMESTATE.MOVE_SELECT:
-                SelectCharacter(playerCharacters[selectedIndex]);
-                eventSystem.SetSelectedGameObject(actionButtons[0].gameObject);
+                SetActionButtonsActive(true);
+                SelectCharacter(playerCharacters[selectedCharacterIndex]);
+                eventSystem.SetSelectedGameObject(actionButtons[selectedIndex].gameObject);
                 break;
             case GAMESTATE.TARGET_SELECT:
-                
+                GenerateTargetList(playerCharacters[selectedCharacterIndex].Abilities[selectedAbilityIndex],
+                    out possibleTargets);
+                HighlightTarget(possibleTargets[selectedIndex]);
                 break;
             case GAMESTATE.ENEMY_TURN:
                 break;
@@ -165,8 +178,6 @@ public class GameManager : MonoBehaviour
         switch (currentGamestate)
         {
             case GAMESTATE.CHARACTER_SELECT:
-                selectedIndex = ClampListBounds(playerCharacters, selectedIndex, direction);             
-                HighlightCharacter(playerCharacters[selectedIndex]);
                 break;
             case GAMESTATE.TARGET_SELECT:
                 break;
@@ -177,36 +188,45 @@ public class GameManager : MonoBehaviour
 
     private void MoveVertical(int direction)
     {
-        //FIXME Need to actually only use an open type to navigate
-        //ClampListBounds(actionButtons, selectedIndex, direction);  
-    }
-
-    private void Select()
-    {
         switch (currentGamestate)
         {
             case GAMESTATE.CHARACTER_SELECT:
-                SetGameState(GAMESTATE.MOVE_SELECT);
+                selectedIndex = ClampListBounds(playerCharacters, selectedIndex, direction);             
+                HighlightCharacter(playerCharacters[selectedIndex]);
                 break;
             case GAMESTATE.MOVE_SELECT:
+                //FIXME Need to actually only use an open type to navigate
+                //ClampListBounds(actionButtons, selectedIndex, direction); 
+                selectedIndex = ClampListBounds(actionButtons, selectedIndex, direction);
+                eventSystem.SetSelectedGameObject(actionButtons[selectedIndex].gameObject);
                 break;
             case GAMESTATE.TARGET_SELECT:
+                selectedIndex = ClampListBounds(possibleTargets, selectedIndex, direction);
+                //eventSystem.SetSelectedGameObject(actionButtons[selectedIndex].gameObject);
+                HighlightTarget(possibleTargets[selectedIndex]);
                 break;
             case GAMESTATE.ENEMY_TURN:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        
     }
-    private void Escape()
+
+    private void Enter()
     {
         switch (currentGamestate)
         {
             case GAMESTATE.CHARACTER_SELECT:
+                selectedCharacterIndex = selectedIndex;
+                SetGameState(GAMESTATE.MOVE_SELECT);
                 break;
             case GAMESTATE.MOVE_SELECT:
+                selectedAbilityIndex = selectedIndex;
+                SetGameState(GAMESTATE.TARGET_SELECT);
                 break;
             case GAMESTATE.TARGET_SELECT:
+                SelectTarget(possibleTargets[selectedIndex]);
                 break;
             case GAMESTATE.ENEMY_TURN:
                 break;
@@ -215,8 +235,31 @@ public class GameManager : MonoBehaviour
         }
     }
     
+    private void Escape()
+    {
+        switch (currentGamestate)
+        {
+            case GAMESTATE.CHARACTER_SELECT:
+                break;
+            case GAMESTATE.MOVE_SELECT:
+                selectedIndex = selectedCharacterIndex;
+                selectedCharacterIndex = 0;
+                SetGameState(GAMESTATE.CHARACTER_SELECT);
+                break;
+            case GAMESTATE.TARGET_SELECT:
+                selectedIndex          = selectedAbilityIndex;
+                selectedAbilityIndex = 0;
+                SetGameState(GAMESTATE.MOVE_SELECT);
+                HighlightCharacter(playerCharacters[selectedCharacterIndex]);
+                break;
+            case GAMESTATE.ENEMY_TURN:
+                break;
+        }
+    }
+    
     //---------------------------------------------------------------------------------------//
 
+    //TODO I think that i can combine both the Target & Character Highlights
     private void HighlightCharacter(CharacterBase character)
     {
         arrowTransform.position = character.Transform.position + arrowOffset;
@@ -229,6 +272,7 @@ public class GameManager : MonoBehaviour
 
     private void SelectCharacter(CharacterBase character)
     {
+        Debug.LogError("Selected Character:" + character.characterName);
         //arrowTransform.position = character.Transform.position + arrowOffset;
 
         for (int i = 0; i < 3; i++)
@@ -248,17 +292,50 @@ public class GameManager : MonoBehaviour
 
     private void HighlightTarget(CharacterBase character)
     {
-        
+        arrowTransform.position = character.Transform.position + arrowOffset;
     }
 
-    private void SelectTarget(CharacterBase character)
+    private void SelectTarget(CharacterBase target)
     {
+        //TODO I should confirm the selection
+    }
+    
+    //---------------------------------------------------------------------------------------//
+    private void GenerateTargetList(AbilityScriptableObject ability, out List<CharacterBase> targets)
+    {
+        targets = new List<CharacterBase>();
+
+        switch (ability.TargetType)
+        {
+            case TargetType.Enemy:
+                targets.AddRange(enemyCharacters);
+                break;
+            case TargetType.Friendly:
+                targets.AddRange(playerCharacters);
+                break;
+            case TargetType.Self:
+                targets.Add(playerCharacters[selectedCharacterIndex]);
+                break;
+        }
         
+        if(ability.CanTargetSelf && ability.TargetType != TargetType.Self)
+            targets.Add(playerCharacters[selectedCharacterIndex]);
+
+        targets = targets.Distinct().ToList();
+
     }
     
     //---------------------------------------------------------------------------------------//
 
-    private static int ClampListBounds(List<CharacterBase> list,int index,  int direction)
+    private void SetActionButtonsActive(bool state)
+    {
+        for(int i = 0; i < actionButtons.Count; i++)
+            actionButtons[i].gameObject.SetActive(state);
+    }
+    
+    //---------------------------------------------------------------------------------------//
+
+    private static int ClampListBounds(IList list,int index,  int direction)
     {
         if (index + direction < 0)
             return list.Count - 1;
