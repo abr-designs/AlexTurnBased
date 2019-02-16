@@ -7,6 +7,6 @@ public enum STATE : int
     AI,
     WAITING,
     STUNNED,
-    DONE,
+    BLOCKING,
     DEAD
 }

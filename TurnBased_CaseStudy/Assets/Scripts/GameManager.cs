@@ -31,6 +31,11 @@ public class GameManager : MonoBehaviour
     private int selectedCharacterIndex;
     [SerializeField, BoxGroup("Info"), ReadOnly]
     private int selectedAbilityIndex;
+    [SerializeField, BoxGroup("Info"), ReadOnly]
+    private int selectedTargetIndex;
+    
+    [SerializeField, ReadOnly,BoxGroup("Info")]
+    private List<CharacterBase> possibleTargets;
     
     //---------------------------------------------------------------------------------------//
     
@@ -67,19 +72,18 @@ public class GameManager : MonoBehaviour
 
     //---------------------------------------------------------------------------------------//
     
-    [SerializeField,FoldoutGroup("Game Character")]
+    [SerializeField,FoldoutGroup("Game Characters")]
     private List<CharacterBase> playerCharacters;
     
-    [SerializeField,FoldoutGroup("Game Character")]
+    [SerializeField,FoldoutGroup("Game Characters")]
     private List<CharacterBase> enemyCharacters;
     
-    [SerializeField, ReadOnly,BoxGroup("Info")]
-    private List<CharacterBase> possibleTargets;
+    
     
     //---------------------------------------------------------------------------------------//
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         InitButtonUI();
         GeneratePartyUI();
@@ -89,7 +93,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         //Input Checks
         if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -118,6 +122,12 @@ public class GameManager : MonoBehaviour
         switch (currentGamestate)
         {
             case GAMESTATE.CHARACTER_SELECT:
+                if (!GetNextAvailableCharacter(out selectedIndex))
+                {
+                    Debug.LogError("No more available moves");
+                    return;
+                }
+                
                 SetActionButtonsActive(false);
                 HighlightCharacter(playerCharacters[selectedIndex]);
                 eventSystem.SetSelectedGameObject(null);
@@ -191,7 +201,15 @@ public class GameManager : MonoBehaviour
         switch (currentGamestate)
         {
             case GAMESTATE.CHARACTER_SELECT:
-                selectedIndex = ClampListBounds(playerCharacters, selectedIndex, direction);             
+                selectedIndex = ClampListBounds(playerCharacters, selectedIndex, direction);
+                
+                //We check here if this character has used their move for this turn
+                if (playerCharacters[selectedIndex].turnDone)
+                {
+                    MoveVertical(direction);
+                    return;
+                }
+                
                 HighlightCharacter(playerCharacters[selectedIndex]);
                 break;
             case GAMESTATE.MOVE_SELECT:
@@ -226,7 +244,9 @@ public class GameManager : MonoBehaviour
                 SetGameState(GAMESTATE.TARGET_SELECT);
                 break;
             case GAMESTATE.TARGET_SELECT:
-                SelectTarget(possibleTargets[selectedIndex]);
+                selectedTargetIndex = selectedIndex;
+                SelectTarget(playerCharacters[selectedCharacterIndex].Abilities[selectedAbilityIndex], possibleTargets[selectedTargetIndex]);
+                FinishCharacterTurn(playerCharacters[selectedCharacterIndex]);
                 break;
             case GAMESTATE.ENEMY_TURN:
                 break;
@@ -264,10 +284,16 @@ public class GameManager : MonoBehaviour
     {
         arrowTransform.position = character.Transform.position + arrowOffset;
         //TODO Need to highlight the UI portion of the character
-        
-        for(int i = 0; i < memberElements.Count; i++)
-            memberElements[i].Highlight(i == selectedIndex);
+
+        for (int i = 0; i < memberElements.Count; i++)
+        {
+            //Skip trying to set the colors of any characters that have finished their turn
+            if(playerCharacters[i].turnDone)
+                continue;
             
+            memberElements[i].Highlight(i == selectedIndex);
+        }
+
     }
 
     private void SelectCharacter(CharacterBase character)
@@ -295,9 +321,59 @@ public class GameManager : MonoBehaviour
         arrowTransform.position = character.Transform.position + arrowOffset;
     }
 
-    private void SelectTarget(CharacterBase target)
+    private void SelectTarget(AbilityScriptableObject ability, CharacterBase target)
     {
         //TODO I should confirm the selection
+        switch (ability.AbilityType)
+        {
+            case AbilityType.LightAttack:
+            case AbilityType.HeavyAttack:
+                //Damage character, based on chance and on range
+                target.DoDamage(ability.GetValueRoll());
+
+                break;
+            case AbilityType.Stun:
+                //Stuns Target
+                target.Stun();
+                break;
+            case AbilityType.Heal:
+                //Add health, based on range
+                target.Heal(ability.GetValueRoll());
+                break;
+            case AbilityType.Block:
+                //Sets target to be blocking
+                target.Block();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    
+    //---------------------------------------------------------------------------------------//
+
+    private void FinishCharacterTurn(CharacterBase character)
+    {
+        //TODO Need to check if all characters have finished their turn
+        memberElements[selectedCharacterIndex].SetActive(false);
+
+        character.EndTurn();
+        
+        SetGameState(GAMESTATE.CHARACTER_SELECT);
+    }
+
+    private bool GetNextAvailableCharacter(out int availableIndex)
+    {
+        availableIndex = 0;
+        for (int i = 0; i < playerCharacters.Count; i++)
+        {
+            if (!playerCharacters[i].turnDone)
+            {
+                availableIndex = i;
+                return true;
+            }
+        }
+
+        return false;
     }
     
     //---------------------------------------------------------------------------------------//

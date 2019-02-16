@@ -20,6 +20,14 @@ public class AbilityScriptableObject : ScriptableObject
 
 	public bool CanTargetSelf;
 
+	public int GetValueRoll()
+	{
+		if (Random.value > chance)
+			return 0;
+
+		return Random.Range(valueRange.x, valueRange.y + 1);
+	}
+
 }
 
 public enum AbilityType

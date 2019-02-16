@@ -21,6 +21,9 @@ public class PartMemberUIElement : MonoBehaviour
 	private Color highLightColor = Color.cyan;
 	[SerializeField]
 	private Color defaultColor = Color.white;
+	[SerializeField]
+	private Color disableColor = Color.grey;
+
 	
 	
 	public void Init(CharacterBase Character)
@@ -46,5 +49,10 @@ public class PartMemberUIElement : MonoBehaviour
 	public void Highlight(bool state)
 	{
 		image.color = state ? highLightColor : defaultColor;
+	}
+
+	public void SetActive(bool state)
+	{
+		image.color = !state ? disableColor : defaultColor;
 	}
 }
