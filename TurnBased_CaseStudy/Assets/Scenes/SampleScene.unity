@@ -190,6 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a972b77dfdf34c4582e42e053bb1bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnDone: 0
   characterName: Rock
   attackType: 0
   stats: {fileID: 11400000, guid: ef5223670da30de49ba575e79b5d0926, type: 2}
@@ -459,6 +460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a972b77dfdf34c4582e42e053bb1bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnDone: 0
   characterName: Paper
   attackType: 1
   stats: {fileID: 11400000, guid: ef5223670da30de49ba575e79b5d0926, type: 2}
@@ -669,6 +671,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a972b77dfdf34c4582e42e053bb1bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnDone: 0
   characterName: Rock
   attackType: 0
   stats: {fileID: 11400000, guid: fcb0fd8fc5c79ef4ea207a6aa8d6fbbf, type: 2}
@@ -704,6 +707,8 @@ MonoBehaviour:
   selectedIndex: 0
   selectedCharacterIndex: 0
   selectedAbilityIndex: 0
+  selectedTargetIndex: 0
+  possibleTargets: []
   arrowTransform: {fileID: 1612000856}
   arrowOffset: {x: 0, y: 1.4, z: 0}
   actionButtons:
@@ -721,6 +726,8 @@ MonoBehaviour:
   enemyCharacters:
   - {fileID: 1342862592}
   - {fileID: 542972340}
+  risingTextPrefab: {fileID: 1169778824134583775, guid: e373f66cd16157b40808c5a36c0d3899,
+    type: 3}
 --- !u!4 &1011883156
 Transform:
   m_ObjectHideFlags: 0
@@ -1138,6 +1145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a972b77dfdf34c4582e42e053bb1bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnDone: 0
   characterName: Rock
   attackType: 0
   stats: {fileID: 11400000, guid: fcb0fd8fc5c79ef4ea207a6aa8d6fbbf, type: 2}
@@ -1997,6 +2005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a972b77dfdf34c4582e42e053bb1bc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turnDone: 0
   characterName: Scissors
   attackType: 2
   stats: {fileID: 11400000, guid: a0a47bacee6b6154a85191a980df2d12, type: 2}

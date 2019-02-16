@@ -81,6 +81,11 @@ public class GameManager : MonoBehaviour
     
     
     //---------------------------------------------------------------------------------------//
+
+    [SerializeField, Required]
+    public GameObject risingTextPrefab;
+    
+    //---------------------------------------------------------------------------------------//
     
     // Start is called before the first frame update
     private void Start()
@@ -88,7 +93,7 @@ public class GameManager : MonoBehaviour
         InitButtonUI();
         GeneratePartyUI();
 
-        SetGameState(GAMESTATE.CHARACTER_SELECT);
+        StartPlayerTurn();
 
     }
 
@@ -143,10 +148,27 @@ public class GameManager : MonoBehaviour
                 HighlightTarget(possibleTargets[selectedIndex]);
                 break;
             case GAMESTATE.ENEMY_TURN:
+                Debug.LogError("Enemy Using Turn...");
+                StartPlayerTurn();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private void StartPlayerTurn()
+    {
+        for(int i = 0; i< playerCharacters.Count; i++)
+            playerCharacters[i].StartTurn();
+        
+        SetGameState(GAMESTATE.CHARACTER_SELECT);
+    }
+
+    private void EndPlayerTurn()
+    {
+        Debug.LogError("Enemy Turn");
+        SetGameState(GAMESTATE.ENEMY_TURN);
+        
     }
     
     //---------------------------------------------------------------------------------------//
@@ -323,14 +345,15 @@ public class GameManager : MonoBehaviour
 
     private void SelectTarget(AbilityScriptableObject ability, CharacterBase target)
     {
+        int value = ability.GetValueRoll();
+        
         //TODO I should confirm the selection
         switch (ability.AbilityType)
         {
             case AbilityType.LightAttack:
             case AbilityType.HeavyAttack:
                 //Damage character, based on chance and on range
-                target.DoDamage(ability.GetValueRoll());
-
+                target.DoDamage(value);
                 break;
             case AbilityType.Stun:
                 //Stuns Target
@@ -338,7 +361,7 @@ public class GameManager : MonoBehaviour
                 break;
             case AbilityType.Heal:
                 //Add health, based on range
-                target.Heal(ability.GetValueRoll());
+                target.Heal(value);
                 break;
             case AbilityType.Block:
                 //Sets target to be blocking
@@ -357,8 +380,12 @@ public class GameManager : MonoBehaviour
         memberElements[selectedCharacterIndex].SetActive(false);
 
         character.EndTurn();
-        
-        SetGameState(GAMESTATE.CHARACTER_SELECT);
+
+        if (IsCharacterAvailable())
+            SetGameState(GAMESTATE.CHARACTER_SELECT);
+        else
+            EndPlayerTurn();
+
     }
 
     private bool GetNextAvailableCharacter(out int availableIndex)
@@ -369,6 +396,18 @@ public class GameManager : MonoBehaviour
             if (!playerCharacters[i].turnDone)
             {
                 availableIndex = i;
+                return true;
+            }
+        }
+
+        return false;
+    }
+    private bool IsCharacterAvailable()
+    {
+        for (int i = 0; i < playerCharacters.Count; i++)
+        {
+            if (!playerCharacters[i].turnDone)
+            {
                 return true;
             }
         }

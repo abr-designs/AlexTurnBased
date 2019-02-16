@@ -31,11 +31,16 @@ public class CharacterBase : MonoBehaviour
     public int StartingHealth => stats.startingHealth;
 
     private new Transform transform;
+
+    private static GameManager _gameManager;
     
     //---------------------------------------------------------------------------------------//
     // Start is called before the first frame update
     void Awake()
     {
+        if (!_gameManager)
+            _gameManager = FindObjectOfType<GameManager>();
+        
         transform = gameObject.transform;
 
         CurrentHealth = stats.startingHealth;
@@ -87,7 +92,7 @@ public class CharacterBase : MonoBehaviour
     {
         if (value == 0)
         {
-            Debug.LogError("Miss");
+            Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Miss", Color.cyan, Transform.position );
             return;
         }
         
@@ -96,11 +101,12 @@ public class CharacterBase : MonoBehaviour
         if (currentState == STATE.BLOCKING)
         {
             SetCurrentState(STATE.WAITING);
-            Debug.LogError("Blocked");
+            Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Blocked", Color.cyan, Transform.position);
             return;
         }
         
-        Debug.LogError("Damage: " + value);
+        
+        Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init(value.ToString(), Color.red, Transform.position);
         
         CurrentHealth = Mathf.Clamp(CurrentHealth - value, 0, StartingHealth);
         
@@ -111,11 +117,13 @@ public class CharacterBase : MonoBehaviour
     public void Heal(int value)
     {
         CurrentHealth = Mathf.Clamp(CurrentHealth + value, 0, StartingHealth);
+        Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init(value.ToString(), Color.green, Transform.position);
     }
 
     public void Stun()
     {
         SetCurrentState(STATE.STUNNED);
+        Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Stunned", Color.white, Transform.position);
     }
     
     public void Block()
