@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -357,7 +358,7 @@ public class GameManager : MonoBehaviour
                 break;
             case AbilityType.Stun:
                 //Stuns Target
-                target.Stun();
+                target.Stun(1);
                 break;
             case AbilityType.Heal:
                 //Add health, based on range
@@ -370,6 +371,90 @@ public class GameManager : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+    
+    //---------------------------------------------------------------------------------------//
+
+    private IEnumerator EnemyTurnCoroutine()
+    {
+        for (int i = 0; i < enemyCharacters.Count; i++)
+        {
+            var e = enemyCharacters[i] as EnemyCharacter;
+            
+            if (e.isDead)
+                continue;
+            
+            e.StartTurn();
+
+            if (e.isStunned)
+            {
+                //TODO Need to have some floating text here
+                continue;
+            }
+            
+            //TODO Need to decide whether we will play defensively or offensively
+            
+            //If we have less than 50% health & we can't potentially kill any character, prioritize heal
+            //If we can attack someone and kill them with a light attack do that
+            //If we can attack and kill someone with a heavy attack, do that
+            //If we can't kill anyone, default to heavy attack on lowest health target ,Then light attack or then block
+
+            int lowHealthCharacterIndex = LowestHealthPlayerCharacterIndex();
+            
+            
+            if (e.heal != null && (e.CurrentHealth / e.StartingHealth) <= 0.5f)
+            {
+                //TODO Heal
+            }
+            else if (e.lightAttack != null &&
+                     playerCharacters[lowHealthCharacterIndex].CurrentHealth - e.lightAttack.valueRange.y <= 0)
+            {
+                
+            }
+            else if (e.heavyAttack != null &&
+                     playerCharacters[lowHealthCharacterIndex].CurrentHealth - e.heavyAttack.valueRange.y <= 0)
+            {
+                
+            }
+            else
+            {
+                if(e.heavyAttack)
+                {
+                    //TODO Do Heavy Attack
+                 }
+                else if(e.lightAttack)
+                {
+                    //TODO Do Light Attack
+                }
+                else if(e.block)
+                {
+                    //TODO Do Block
+                }
+            }
+            
+            e.EndTurn();
+            
+            
+        }
+
+        yield return null;
+    }
+
+    private int LowestHealthPlayerCharacterIndex()
+    {
+        int lowest = 999;
+        int index = -1;
+
+        for (int i = 0; i < playerCharacters.Count; i++)
+        {
+            if (playerCharacters[i].CurrentHealth < lowest)
+            {
+                lowest = playerCharacters[i].CurrentHealth;
+                index = i;
+            }
+        }
+
+        return index;
     }
     
     //---------------------------------------------------------------------------------------//

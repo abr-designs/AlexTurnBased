@@ -135,6 +135,7 @@
         </e>
         <e p="Scripts" t="Include">
           <e p="CharacterBase.cs" t="Include" />
+          <e p="EnemyCharacter.cs" t="Include" />
           <e p="Enums" t="Include">
             <e p="STATE.cs" t="Include" />
             <e p="TYPE.cs" t="Include" />

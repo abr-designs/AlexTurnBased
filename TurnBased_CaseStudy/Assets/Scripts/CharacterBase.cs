@@ -9,12 +9,17 @@ public class CharacterBase : MonoBehaviour
 {
 
     public bool turnDone = false;
-    
+
+    public bool isDead => currentState == STATE.DEAD;
+    public bool isStunned => currentState == STATE.STUNNED;
+
     public Transform Transform => transform;
 
     public string characterName;
 
     protected STATE currentState;
+
+    protected int stunTime = 0;
     
     //---------------------------------------------------------------------------------------//
 
@@ -36,7 +41,7 @@ public class CharacterBase : MonoBehaviour
     
     //---------------------------------------------------------------------------------------//
     // Start is called before the first frame update
-    void Awake()
+    protected virtual void Awake()
     {
         if (!_gameManager)
             _gameManager = FindObjectOfType<GameManager>();
@@ -73,9 +78,16 @@ public class CharacterBase : MonoBehaviour
 
     public void StartTurn()
     {
-        if(currentState == STATE.STUNNED)
-            SetCurrentState(STATE.WAITING);
-        else if(currentState == STATE.DEAD)
+        if (currentState == STATE.STUNNED)
+        {
+            if(stunTime == 0)
+                SetCurrentState(STATE.WAITING);
+            else
+            {
+                stunTime--;
+            }
+        }
+        else if(isDead)
             return;
 
         turnDone = false;
@@ -120,7 +132,7 @@ public class CharacterBase : MonoBehaviour
         Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init(value.ToString(), Color.green, Transform.position);
     }
 
-    public void Stun()
+    public void Stun(int turns)
     {
         SetCurrentState(STATE.STUNNED);
         Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Stunned", Color.white, Transform.position);
