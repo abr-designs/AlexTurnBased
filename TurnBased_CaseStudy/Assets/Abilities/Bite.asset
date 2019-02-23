@@ -19,3 +19,5 @@ MonoBehaviour:
   chance: 0.7
   valueRange: {x: 5, y: 10}
   CanTargetSelf: 0
+  effectPrefab: {fileID: 191512, guid: 6d8fb94c8f1fb7c4ba277327ad4ba3b2, type: 3}
+  effectOffset: {x: 0, y: 0, z: 0}

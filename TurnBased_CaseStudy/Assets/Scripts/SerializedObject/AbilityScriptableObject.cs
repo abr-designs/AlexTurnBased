@@ -20,12 +20,24 @@ public class AbilityScriptableObject : ScriptableObject
 
 	public bool CanTargetSelf;
 
+	public GameObject effectPrefab;
+	public Vector3 effectOffset = Vector3.zero;
+
 	public int GetValueRoll()
 	{
 		if (Random.value > chance)
 			return 0;
 
 		return Random.Range(valueRange.x, valueRange.y + 1);
+	}
+
+	public void ApplyEffectOnTarget(CharacterBase character)
+	{
+		if (effectPrefab == null)
+			return;
+
+		var temp = Instantiate(effectPrefab).transform;
+		temp.position = character.Transform.position + effectOffset;
 	}
 
 }

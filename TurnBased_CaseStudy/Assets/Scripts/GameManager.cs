@@ -385,23 +385,33 @@ public class GameManager : MonoBehaviour
             case AbilityType.HeavyAttack:
                 //Damage character, based on chance and on range
                 target.DoDamage(value);
+                if(value > 0)
+                    ability.ApplyEffectOnTarget(target);
+
                 break;
             case AbilityType.Stun:
                 //Stuns Target
                 target.Stun(1);
+                ability.ApplyEffectOnTarget(target);
+
                 break;
             case AbilityType.Heal:
                 //Add health, based on range
                 target.Heal(value);
                 memberElements.Find(x => x.m_character == target).UpdateUI();
+                ability.ApplyEffectOnTarget(target);
+
                 break;
             case AbilityType.Block:
                 //Sets target to be blocking
                 target.Block();
+                ability.ApplyEffectOnTarget(target);
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        
     }
     
     //---------------------------------------------------------------------------------------//
@@ -440,6 +450,7 @@ public class GameManager : MonoBehaviour
             
 
             int lowHealthCharacterIndex = LowestHealthPlayerCharacterIndex();
+            int value = 0;
             
             //If we have less than 50% health & we can't potentially kill any character, prioritize heal
             //TODO Need to consider healing their teammates as well
@@ -447,6 +458,7 @@ public class GameManager : MonoBehaviour
             {
                 //TODO Heal
                 e.Heal(e.heal.GetValueRoll());
+                e.heal.ApplyEffectOnTarget(e);
                 
                 yield return new WaitForSeconds(2f);
                 
@@ -458,9 +470,13 @@ public class GameManager : MonoBehaviour
                 HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
             
                 yield return new WaitForSeconds(1f);
+                value = e.lightAttack.GetValueRoll();
                 
                 playerCharacters[lowHealthCharacterIndex].DoDamage(e.lightAttack.GetValueRoll());
                 memberElements[lowHealthCharacterIndex].UpdateUI();
+                
+                if(value > 0)
+                    e.lightAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
                 
                 yield return new WaitForSeconds(2f);
             }
@@ -471,9 +487,13 @@ public class GameManager : MonoBehaviour
                 HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
             
                 yield return new WaitForSeconds(1f);
+                value = e.lightAttack.GetValueRoll();
                 
                 playerCharacters[lowHealthCharacterIndex].DoDamage(e.heavyAttack.GetValueRoll());
                 memberElements[lowHealthCharacterIndex].UpdateUI();
+                
+                if(value > 0)
+                 e.heavyAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
                 
                 yield return new WaitForSeconds(2f);
             }
@@ -485,10 +505,14 @@ public class GameManager : MonoBehaviour
                     HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
             
                     yield return new WaitForSeconds(1f);
+                    value = e.lightAttack.GetValueRoll();
                     
                     //TODO Do Heavy Attack
                     playerCharacters[lowHealthCharacterIndex].DoDamage(e.heavyAttack.GetValueRoll());
                     memberElements[lowHealthCharacterIndex].UpdateUI();
+                    
+                    if(value > 0)
+                        e.heavyAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
                 
                     yield return new WaitForSeconds(2f);
                  }
@@ -497,15 +521,21 @@ public class GameManager : MonoBehaviour
                     HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
             
                     yield return new WaitForSeconds(1f);
+
+                    value = e.lightAttack.GetValueRoll();
                     
-                    playerCharacters[lowHealthCharacterIndex].DoDamage(e.lightAttack.GetValueRoll());
+                    playerCharacters[lowHealthCharacterIndex].DoDamage(value);
                     memberElements[lowHealthCharacterIndex].UpdateUI();
+                    
+                    if(value > 0)
+                        e.lightAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
                 
                     yield return new WaitForSeconds(2f);
                 }
                 else if(e.block)
                 {
                     e.Block();
+                    e.block.ApplyEffectOnTarget(e);
                     yield return new WaitForSeconds(2f);
                 }
             }
@@ -589,10 +619,20 @@ public class GameManager : MonoBehaviour
         switch (ability.TargetType)
         {
             case TargetType.Enemy:
-                targets.AddRange(enemyCharacters);
+                //targets.AddRange(enemyCharacters);
+                foreach (var enemyCharacter in enemyCharacters)
+                {
+                    if(!enemyCharacter.IsDead)
+                        targets.Add(enemyCharacter);
+                }
                 break;
             case TargetType.Friendly:
                 targets.AddRange(playerCharacters);
+                foreach (var character in playerCharacters)
+                {
+                    if(!character.IsDead)
+                        targets.Add(character);
+                }
                 break;
             case TargetType.Self:
                 targets.Add(playerCharacters[selectedCharacterIndex]);
