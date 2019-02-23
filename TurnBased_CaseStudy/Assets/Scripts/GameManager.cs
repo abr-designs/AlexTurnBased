@@ -80,6 +80,9 @@ public class GameManager : MonoBehaviour
     private List<CharacterBase> enemyCharacters;
     
     
+    [SerializeField, FoldoutGroup("Game UI"), Required]
+    private TextMeshProUGUI turnText;
+    
     
     //---------------------------------------------------------------------------------------//
 
@@ -150,7 +153,8 @@ public class GameManager : MonoBehaviour
                 break;
             case GAMESTATE.ENEMY_TURN:
                 Debug.LogError("Enemy Using Turn...");
-                StartPlayerTurn();
+                //StartPlayerTurn();
+                StartCoroutine(EnemyTurnCoroutine());
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -161,6 +165,8 @@ public class GameManager : MonoBehaviour
     {
         for(int i = 0; i< playerCharacters.Count; i++)
             playerCharacters[i].StartTurn();
+
+        StartCoroutine(ShowTurnTextCoroutine("Your Turn", Color.cyan));
         
         SetGameState(GAMESTATE.CHARACTER_SELECT);
     }
@@ -170,6 +176,30 @@ public class GameManager : MonoBehaviour
         Debug.LogError("Enemy Turn");
         SetGameState(GAMESTATE.ENEMY_TURN);
         
+    }
+
+    private IEnumerator ShowTurnTextCoroutine(string message, Color color)
+    {
+        turnText.color = Color.clear;
+        turnText.text = message;
+        
+        float _t = 0f;
+        while (_t < 1f)
+        {
+            turnText.color = Color.Lerp(Color.clear, color, _t += Time.deltaTime * 3f);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1f);
+        
+        _t = 0f;
+        
+        while (_t < 1f)
+        {
+            turnText.color = Color.Lerp(color, Color.clear, _t += Time.deltaTime);
+            yield return null;
+        }
+
     }
     
     //---------------------------------------------------------------------------------------//
@@ -363,6 +393,7 @@ public class GameManager : MonoBehaviour
             case AbilityType.Heal:
                 //Add health, based on range
                 target.Heal(value);
+                memberElements.Find(x => x.m_character == target).UpdateUI();
                 break;
             case AbilityType.Block:
                 //Sets target to be blocking
@@ -377,58 +408,105 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EnemyTurnCoroutine()
     {
+        yield return StartCoroutine(ShowTurnTextCoroutine("Enemy Turn", Color.red));
+        
+        
         for (int i = 0; i < enemyCharacters.Count; i++)
         {
             var e = enemyCharacters[i] as EnemyCharacter;
-            
-            if (e.isDead)
+
+            if (e == null)
                 continue;
+            
+            if (e.IsDead)
+                continue;
+
+            HighlightTarget(e);
+            
+            yield return new WaitForSeconds(1f);
             
             e.StartTurn();
 
-            if (e.isStunned)
+            if (e.IsStunned)
             {
-                //TODO Need to have some floating text here
+                e.ShowStunnedState();
+                
+                yield return new WaitForSeconds(2f);
+                
                 continue;
             }
             
             //TODO Need to decide whether we will play defensively or offensively
             
-            //If we have less than 50% health & we can't potentially kill any character, prioritize heal
-            //If we can attack someone and kill them with a light attack do that
-            //If we can attack and kill someone with a heavy attack, do that
-            //If we can't kill anyone, default to heavy attack on lowest health target ,Then light attack or then block
 
             int lowHealthCharacterIndex = LowestHealthPlayerCharacterIndex();
             
-            
-            if (e.heal != null && (e.CurrentHealth / e.StartingHealth) <= 0.5f)
+            //If we have less than 50% health & we can't potentially kill any character, prioritize heal
+            //TODO Need to consider healing their teammates as well
+            if (e.heal != null && e.CurrentHealthNormalized <= 0.5f)
             {
                 //TODO Heal
+                e.Heal(e.heal.GetValueRoll());
+                
+                yield return new WaitForSeconds(2f);
+                
             }
+            //If we can attack someone and kill them with a light attack do that
             else if (e.lightAttack != null &&
                      playerCharacters[lowHealthCharacterIndex].CurrentHealth - e.lightAttack.valueRange.y <= 0)
             {
+                HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
+            
+                yield return new WaitForSeconds(1f);
                 
+                playerCharacters[lowHealthCharacterIndex].DoDamage(e.lightAttack.GetValueRoll());
+                memberElements[lowHealthCharacterIndex].UpdateUI();
+                
+                yield return new WaitForSeconds(2f);
             }
+            //If we can attack and kill someone with a heavy attack, do that
             else if (e.heavyAttack != null &&
                      playerCharacters[lowHealthCharacterIndex].CurrentHealth - e.heavyAttack.valueRange.y <= 0)
             {
+                HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
+            
+                yield return new WaitForSeconds(1f);
                 
+                playerCharacters[lowHealthCharacterIndex].DoDamage(e.heavyAttack.GetValueRoll());
+                memberElements[lowHealthCharacterIndex].UpdateUI();
+                
+                yield return new WaitForSeconds(2f);
             }
+            //If we can't kill anyone, default to heavy attack on lowest health target ,Then light attack or then block
             else
             {
                 if(e.heavyAttack)
                 {
+                    HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
+            
+                    yield return new WaitForSeconds(1f);
+                    
                     //TODO Do Heavy Attack
+                    playerCharacters[lowHealthCharacterIndex].DoDamage(e.heavyAttack.GetValueRoll());
+                    memberElements[lowHealthCharacterIndex].UpdateUI();
+                
+                    yield return new WaitForSeconds(2f);
                  }
                 else if(e.lightAttack)
                 {
-                    //TODO Do Light Attack
+                    HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
+            
+                    yield return new WaitForSeconds(1f);
+                    
+                    playerCharacters[lowHealthCharacterIndex].DoDamage(e.lightAttack.GetValueRoll());
+                    memberElements[lowHealthCharacterIndex].UpdateUI();
+                
+                    yield return new WaitForSeconds(2f);
                 }
                 else if(e.block)
                 {
-                    //TODO Do Block
+                    e.Block();
+                    yield return new WaitForSeconds(2f);
                 }
             }
             
@@ -436,8 +514,8 @@ public class GameManager : MonoBehaviour
             
             
         }
-
-        yield return null;
+        
+        StartPlayerTurn();
     }
 
     private int LowestHealthPlayerCharacterIndex()
@@ -447,6 +525,9 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < playerCharacters.Count; i++)
         {
+            if (playerCharacters[i].IsDead)
+                continue;
+            
             if (playerCharacters[i].CurrentHealth < lowest)
             {
                 lowest = playerCharacters[i].CurrentHealth;

@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Character_BaseStats", menuName = "Character/Stats", order = 1)]
 public class CharacterBase : MonoBehaviour
 {
 
     public bool turnDone = false;
 
-    public bool isDead => currentState == STATE.DEAD;
-    public bool isStunned => currentState == STATE.STUNNED;
+    public bool IsDead => currentState == STATE.DEAD;
+    public bool IsStunned => currentState == STATE.STUNNED;
 
     public Transform Transform => transform;
 
@@ -32,6 +31,8 @@ public class CharacterBase : MonoBehaviour
     //---------------------------------------------------------------------------------------//
 
     public AbilityScriptableObject[] Abilities => stats.abilities;
+    
+    public float CurrentHealthNormalized => (float)CurrentHealth / (float)StartingHealth;
     public int CurrentHealth { get; private set; }
     public int StartingHealth => stats.startingHealth;
 
@@ -87,7 +88,7 @@ public class CharacterBase : MonoBehaviour
                 stunTime--;
             }
         }
-        else if(isDead)
+        else if(IsDead)
             return;
 
         turnDone = false;
@@ -135,12 +136,22 @@ public class CharacterBase : MonoBehaviour
     public void Stun(int turns)
     {
         SetCurrentState(STATE.STUNNED);
+        stunTime = turns;
+        Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Stunned", Color.white, Transform.position);
+    }
+
+    public void ShowStunnedState()
+    {
+        if (currentState != STATE.STUNNED)
+            return;
+        
         Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Stunned", Color.white, Transform.position);
     }
     
     public void Block()
     {
-        SetCurrentState(STATE.STUNNED);
+        SetCurrentState(STATE.BLOCKING);
+        Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Blocking", Color.cyan, Transform.position);
     }
     
     //---------------------------------------------------------------------------------------//

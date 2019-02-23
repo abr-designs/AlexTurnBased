@@ -23,6 +23,9 @@ public class EnemyCharacter : CharacterBase
 	{
 		for (int i = 0; i < stats.abilities.Length; i++)
 		{
+			if(stats.abilities[i] == null)
+				continue;
+			
 			if (stats.abilities[i].AbilityType == type)
 				return stats.abilities[i];
 		}

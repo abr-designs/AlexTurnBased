@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PartMemberUIElement : MonoBehaviour
 {
-	private CharacterBase m_character;
+	public CharacterBase m_character { get; private set; }
 
 	[SerializeField, Required]
 	private TextMeshProUGUI nameText;

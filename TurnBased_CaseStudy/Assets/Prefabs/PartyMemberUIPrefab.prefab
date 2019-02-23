@@ -313,7 +313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.40813607, g: 0.6320754, b: 0.3965379, a: 1}
+  m_Color: {r: 0.5283019, g: 0.14702742, b: 0.18439834, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -469,6 +469,7 @@ MonoBehaviour:
   image: {fileID: 8834725318600667668}
   highLightColor: {r: 1, g: 0.98354274, b: 0.5424528, a: 1}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  disableColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!1 &6348372161692615728
 GameObject:
   m_ObjectHideFlags: 0
