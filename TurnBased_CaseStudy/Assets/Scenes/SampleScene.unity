@@ -164,8 +164,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 908095375
+  m_SortingLayer: -1
   m_SortingOrder: -157
   m_Sprite: {fileID: 21300000, guid: 9b0dbfd67290f554589bc5d9684231bc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -194,6 +194,9 @@ MonoBehaviour:
   characterName: Rock
   attackType: 0
   stats: {fileID: 11400000, guid: ef5223670da30de49ba575e79b5d0926, type: 2}
+  _spriteLibrary:
+    idleSprite: {fileID: 21300000, guid: 9b0dbfd67290f554589bc5d9684231bc, type: 3}
+    deadSprite: {fileID: 21300000, guid: 2ca78953520f8a64c9593fd0e6ec74f8, type: 3}
 --- !u!4 &158962581
 Transform:
   m_ObjectHideFlags: 0
@@ -420,8 +423,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 908095375
+  m_SortingLayer: -1
   m_SortingOrder: -157
   m_Sprite: {fileID: 21300000, guid: 65d5645c9cd2bec4bb58221870d2d409, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -464,6 +467,9 @@ MonoBehaviour:
   characterName: Paper
   attackType: 1
   stats: {fileID: 11400000, guid: ef5223670da30de49ba575e79b5d0926, type: 2}
+  _spriteLibrary:
+    idleSprite: {fileID: 21300000, guid: 65d5645c9cd2bec4bb58221870d2d409, type: 3}
+    deadSprite: {fileID: 21300000, guid: 14f12acf849c0ba45b275ff525f2f8f1, type: 3}
 --- !u!1 &332223647
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,7 +501,7 @@ Transform:
   - {fileID: 158962581}
   - {fileID: 1691264515}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &534669902
 GameObject:
@@ -572,11 +578,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1011883156}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &542972337
@@ -645,8 +651,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 908095375
+  m_SortingLayer: -1
   m_SortingOrder: -157
   m_Sprite: {fileID: 21300000, guid: 0a88bf9ff424c6f45ad1d91478494f18, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -675,6 +681,9 @@ MonoBehaviour:
   characterName: Enemy 2
   attackType: 0
   stats: {fileID: 11400000, guid: fcb0fd8fc5c79ef4ea207a6aa8d6fbbf, type: 2}
+  _spriteLibrary:
+    idleSprite: {fileID: 21300000, guid: 0a88bf9ff424c6f45ad1d91478494f18, type: 3}
+    deadSprite: {fileID: 21300000, guid: 02407c39aa9440f49bfd74ae4aeefa90, type: 3}
 --- !u!1 &733322131
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,6 +873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d052009ce8d87d0499afbf7e949089c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentTurn: 0
   selectedIndex: 0
   selectedCharacterIndex: 0
   selectedAbilityIndex: 0
@@ -879,6 +889,9 @@ MonoBehaviour:
     type: 3}
   partyUiContainerTransform: {fileID: 1468964208}
   eventSystem: {fileID: 1618573545}
+  shieldSpritePrefab: {fileID: 5713236053480983221, guid: ca6ab2612f12f124480a8d982257f9e2,
+    type: 3}
+  stunEffectPrefab: {fileID: 109542, guid: 2ed06ab528b7c474eb9246421cd7c791, type: 3}
   playerCharacters:
   - {fileID: 331301326}
   - {fileID: 158962580}
@@ -901,6 +914,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1612000856}
+  - {fileID: 534669905}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -934,7 +948,7 @@ Transform:
   - {fileID: 1342862590}
   - {fileID: 542972338}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1160887934
 GameObject:
@@ -1280,8 +1294,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 908095375
+  m_SortingLayer: -1
   m_SortingOrder: -157
   m_Sprite: {fileID: 21300000, guid: 0a88bf9ff424c6f45ad1d91478494f18, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1310,6 +1324,9 @@ MonoBehaviour:
   characterName: Enemy 1
   attackType: 0
   stats: {fileID: 11400000, guid: fcb0fd8fc5c79ef4ea207a6aa8d6fbbf, type: 2}
+  _spriteLibrary:
+    idleSprite: {fileID: 21300000, guid: 0a88bf9ff424c6f45ad1d91478494f18, type: 3}
+    deadSprite: {fileID: 21300000, guid: 02407c39aa9440f49bfd74ae4aeefa90, type: 3}
 --- !u!1 &1396952073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1973,7 +1990,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1678063737
 GameObject:
@@ -2068,7 +2085,7 @@ RectTransform:
   - {fileID: 1958555397}
   - {fileID: 733322132}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2127,8 +2144,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 908095375
+  m_SortingLayer: -1
   m_SortingOrder: -157
   m_Sprite: {fileID: 21300000, guid: 677167fd77fec91469c31cfdf1897166, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2171,6 +2188,9 @@ MonoBehaviour:
   characterName: Scissors
   attackType: 2
   stats: {fileID: 11400000, guid: a0a47bacee6b6154a85191a980df2d12, type: 2}
+  _spriteLibrary:
+    idleSprite: {fileID: 21300000, guid: 677167fd77fec91469c31cfdf1897166, type: 3}
+    deadSprite: {fileID: 21300000, guid: 69551a32463f9f444998205cfa69aa54, type: 3}
 --- !u!1 &1826267848
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,33 +19,39 @@ public class GameManager : MonoBehaviour
         MOVE_SELECT,
         TARGET_SELECT,
         ENEMY_TURN
-        
+
     }
 
     //---------------------------------------------------------------------------------------//
-    
+
     private GAMESTATE currentGamestate;
 
     [SerializeField, BoxGroup("Info"), ReadOnly]
+    private int currentTurn = 0;
+
+    [SerializeField, BoxGroup("Info"), ReadOnly]
     private int selectedIndex;
+
     [SerializeField, BoxGroup("Info"), ReadOnly]
     private int selectedCharacterIndex;
+
     [SerializeField, BoxGroup("Info"), ReadOnly]
     private int selectedAbilityIndex;
+
     [SerializeField, BoxGroup("Info"), ReadOnly]
     private int selectedTargetIndex;
-    
-    [SerializeField, ReadOnly,BoxGroup("Info")]
+
+    [SerializeField, ReadOnly, BoxGroup("Info")]
     private List<CharacterBase> possibleTargets;
-    
+
     //---------------------------------------------------------------------------------------//
-    
+
     [SerializeField, FoldoutGroup("Target UI")]
     private Transform arrowTransform;
 
     [SerializeField, FoldoutGroup("Target UI")]
     private Vector3 arrowOffset;
-    
+
     //---------------------------------------------------------------------------------------//
 
     [SerializeField, FoldoutGroup("Player UI")]
@@ -60,44 +66,50 @@ public class GameManager : MonoBehaviour
     private RectTransform partyUiContainerTransform;
 
     private List<PartMemberUIElement> memberElements;
-   //[SerializeField, FoldoutGroup("Player UI")]
-   //private GameObject buttonPrefab;
+    //[SerializeField, FoldoutGroup("Player UI")]
+    //private GameObject buttonPrefab;
 
-   //[SerializeField, FoldoutGroup("Player UI")]
-   //private TextMeshProUGUI descriptionText;
+    //[SerializeField, FoldoutGroup("Player UI")]
+    //private TextMeshProUGUI descriptionText;
 
-   [SerializeField, FoldoutGroup("Player UI")]
-   private EventSystem eventSystem;
+    [SerializeField, FoldoutGroup("Player UI")]
+    private EventSystem eventSystem;
 
-   //private List<GameObject> buttons;
+    //private List<GameObject> buttons;
 
     //---------------------------------------------------------------------------------------//
-    
-    [SerializeField,FoldoutGroup("Game Characters")]
+    [SerializeField, FoldoutGroup("Game Characters"), Required]
+    public GameObject shieldSpritePrefab;
+
+    [SerializeField, FoldoutGroup("Game Characters"), Required]
+    public GameObject stunEffectPrefab;
+
+    [SerializeField, FoldoutGroup("Game Characters")]
     private List<CharacterBase> playerCharacters;
-    
-    [SerializeField,FoldoutGroup("Game Characters")]
+
+    [SerializeField, FoldoutGroup("Game Characters")]
     private List<CharacterBase> enemyCharacters;
-    
-    
+
+    //---------------------------------------------------------------------------------------//
+
     [SerializeField, FoldoutGroup("Game UI"), Required]
     private TextMeshProUGUI turnText;
-    
-    
+
+
     //---------------------------------------------------------------------------------------//
 
-    [SerializeField, Required]
-    public GameObject risingTextPrefab;
-    
+    [SerializeField, Required] public GameObject risingTextPrefab;
+
     //---------------------------------------------------------------------------------------//
-    
+
     // Start is called before the first frame update
     private void Start()
     {
         InitButtonUI();
         GeneratePartyUI();
 
-        StartPlayerTurn();
+        StartCoroutine(GameLoop());
+        //StartPlayerTurn();
 
     }
 
@@ -114,19 +126,42 @@ public class GameManager : MonoBehaviour
             MoveVertical(-1);
         else if (Input.GetKeyDown(KeyCode.DownArrow))
             MoveVertical(1);
-        
-        if(Input.GetKeyDown(KeyCode.Return))
+
+        if (Input.GetKeyDown(KeyCode.Return))
             Enter();
-        
-        if(Input.GetKeyDown(KeyCode.Escape))
+
+        if (Input.GetKeyDown(KeyCode.Escape))
             Escape();
     }
     //---------------------------------------------------------------------------------------//
 
+
+    private IEnumerator GameLoop()
+    {
+        for (int i = 0; i < playerCharacters.Count; i++)
+            playerCharacters[i].StartTurn();
+
+        SetGameState(GAMESTATE.CHARACTER_SELECT);
+
+        yield return  new WaitUntil(() => !IsCharacterAvailable());
+        
+        Debug.LogError("Enemy Turn");
+        SetGameState(GAMESTATE.ENEMY_TURN);
+        yield return StartCoroutine(ShowTurnTextCoroutine("Enemy Turn", Color.red));
+
+        yield return StartCoroutine(EnemyTurnCoroutine());
+
+        currentTurn++;
+    }
+   //private void NextTurn()
+   //{
+   //    currentTurn++;
+   //    StartPlayerTurn();
+   //}
     private void SetGameState(GAMESTATE newState)
     {
         currentGamestate = newState;
-        selectedIndex = 0;
+        selectedIndex    = 0;
 
         switch (currentGamestate)
         {
@@ -136,7 +171,7 @@ public class GameManager : MonoBehaviour
                     Debug.LogError("No more available moves");
                     return;
                 }
-                
+
                 SetActionButtonsActive(false);
                 HighlightCharacter(playerCharacters[selectedIndex]);
                 eventSystem.SetSelectedGameObject(null);
@@ -152,37 +187,45 @@ public class GameManager : MonoBehaviour
                 HighlightTarget(possibleTargets[selectedIndex]);
                 break;
             case GAMESTATE.ENEMY_TURN:
+                SetActionButtonsActive(false);
                 Debug.LogError("Enemy Using Turn...");
                 //StartPlayerTurn();
-                StartCoroutine(EnemyTurnCoroutine());
+                
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    private void StartPlayerTurn()
-    {
-        for(int i = 0; i< playerCharacters.Count; i++)
-            playerCharacters[i].StartTurn();
+    //private void StartPlayerTurn()
+    //{
+    //    for (int i = 0; i < playerCharacters.Count; i++)
+    //        playerCharacters[i].StartTurn();
+//
+    //    StartCoroutine(ShowTurnTextCoroutine("Your Turn", Color.cyan));
+//
+    //    SetGameState(GAMESTATE.CHARACTER_SELECT);
+    //}
 
-        StartCoroutine(ShowTurnTextCoroutine("Your Turn", Color.cyan));
-        
-        SetGameState(GAMESTATE.CHARACTER_SELECT);
-    }
+    //private void EndPlayerTurn()
+    //{
+    //    Debug.LogError("Enemy Turn");
+    //    SetGameState(GAMESTATE.ENEMY_TURN);
+    //    
+    //    StartCoroutine(EnemyTurnCoroutine());
+//
+    //}
 
-    private void EndPlayerTurn()
-    {
-        Debug.LogError("Enemy Turn");
-        SetGameState(GAMESTATE.ENEMY_TURN);
-        
-    }
+    //private void EndEnemyTurn()
+    //{
+    //    
+    //}
 
     private IEnumerator ShowTurnTextCoroutine(string message, Color color)
     {
         turnText.color = Color.clear;
-        turnText.text = message;
-        
+        turnText.text  = message;
+
         float _t = 0f;
         while (_t < 1f)
         {
@@ -191,9 +234,9 @@ public class GameManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-        
+
         _t = 0f;
-        
+
         while (_t < 1f)
         {
             turnText.color = Color.Lerp(color, Color.clear, _t += Time.deltaTime);
@@ -201,7 +244,7 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    
+
     //---------------------------------------------------------------------------------------//
 
     private void InitButtonUI()
@@ -223,17 +266,17 @@ public class GameManager : MonoBehaviour
 
             rect.SetParent(partyUiContainerTransform);
             rect.localScale = Vector3.one;
-            
+
             temp.Init(playerCharacters[i]);
 
-            if(memberElements == null)
+            if (memberElements == null)
                 memberElements = new List<PartMemberUIElement>();
-            
+
             memberElements.Add(temp);
         }
     }
-    
-    
+
+
     //---------------------------------------------------------------------------------------//
 
     private void MoveHorizontal(int direction)
@@ -255,14 +298,14 @@ public class GameManager : MonoBehaviour
         {
             case GAMESTATE.CHARACTER_SELECT:
                 selectedIndex = ClampListBounds(playerCharacters, selectedIndex, direction);
-                
+
                 //We check here if this character has used their move for this turn
                 if (playerCharacters[selectedIndex].turnDone)
                 {
                     MoveVertical(direction);
                     return;
                 }
-                
+
                 HighlightCharacter(playerCharacters[selectedIndex]);
                 break;
             case GAMESTATE.MOVE_SELECT:
@@ -281,7 +324,7 @@ public class GameManager : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
+
     }
 
     private void Enter()
@@ -298,7 +341,8 @@ public class GameManager : MonoBehaviour
                 break;
             case GAMESTATE.TARGET_SELECT:
                 selectedTargetIndex = selectedIndex;
-                SelectTarget(playerCharacters[selectedCharacterIndex].Abilities[selectedAbilityIndex], possibleTargets[selectedTargetIndex]);
+                SelectTarget(playerCharacters[selectedCharacterIndex].Abilities[selectedAbilityIndex],
+                    possibleTargets[selectedTargetIndex]);
                 FinishCharacterTurn(playerCharacters[selectedCharacterIndex]);
                 break;
             case GAMESTATE.ENEMY_TURN:
@@ -307,7 +351,7 @@ public class GameManager : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }
     }
-    
+
     private void Escape()
     {
         switch (currentGamestate)
@@ -315,12 +359,12 @@ public class GameManager : MonoBehaviour
             case GAMESTATE.CHARACTER_SELECT:
                 break;
             case GAMESTATE.MOVE_SELECT:
-                selectedIndex = selectedCharacterIndex;
+                selectedIndex          = selectedCharacterIndex;
                 selectedCharacterIndex = 0;
                 SetGameState(GAMESTATE.CHARACTER_SELECT);
                 break;
             case GAMESTATE.TARGET_SELECT:
-                selectedIndex          = selectedAbilityIndex;
+                selectedIndex        = selectedAbilityIndex;
                 selectedAbilityIndex = 0;
                 SetGameState(GAMESTATE.MOVE_SELECT);
                 HighlightCharacter(playerCharacters[selectedCharacterIndex]);
@@ -329,7 +373,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-    
+
     //---------------------------------------------------------------------------------------//
 
     //TODO I think that i can combine both the Target & Character Highlights
@@ -341,9 +385,9 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < memberElements.Count; i++)
         {
             //Skip trying to set the colors of any characters that have finished their turn
-            if(playerCharacters[i].turnDone)
+            if (playerCharacters[i].turnDone)
                 continue;
-            
+
             memberElements[i].Highlight(i == selectedIndex);
         }
 
@@ -364,7 +408,7 @@ public class GameManager : MonoBehaviour
 
             actionButtonTexts[i].Text = character.Abilities[i].Name;
         }
-        
+
         //TODO Need to spawn all button options for the character Abilities
         //TODO Need to display character name that has been selected
     }
@@ -377,7 +421,7 @@ public class GameManager : MonoBehaviour
     private void SelectTarget(AbilityScriptableObject ability, CharacterBase target)
     {
         int value = ability.GetValueRoll();
-        
+
         //TODO I should confirm the selection
         switch (ability.AbilityType)
         {
@@ -385,9 +429,15 @@ public class GameManager : MonoBehaviour
             case AbilityType.HeavyAttack:
                 //Damage character, based on chance and on range
                 target.DoDamage(value);
-                if(value > 0)
+                if (value > 0)
                     ability.ApplyEffectOnTarget(target);
 
+                if (!IsAlive(enemyCharacters))
+                {
+                    //TODO Need a way of wrapping up match
+                    StartCoroutine(ShowTurnTextCoroutine("Victory", Color.green));
+                }
+                
                 break;
             case AbilityType.Stun:
                 //Stuns Target
@@ -405,169 +455,144 @@ public class GameManager : MonoBehaviour
             case AbilityType.Block:
                 //Sets target to be blocking
                 target.Block();
-                ability.ApplyEffectOnTarget(target);
+
 
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
+
     }
-    
+
     //---------------------------------------------------------------------------------------//
 
     private IEnumerator EnemyTurnCoroutine()
     {
-        yield return StartCoroutine(ShowTurnTextCoroutine("Enemy Turn", Color.red));
-        
-        
+
+
         for (int i = 0; i < enemyCharacters.Count; i++)
         {
             var e = enemyCharacters[i] as EnemyCharacter;
 
             if (e == null)
                 continue;
-            
+
             if (e.IsDead)
                 continue;
 
             HighlightTarget(e);
-            
+
             yield return new WaitForSeconds(1f);
-            
+
             e.StartTurn();
 
             if (e.IsStunned)
             {
                 e.ShowStunnedState();
-                
-                yield return new WaitForSeconds(2f);
-                
+
+                yield return new WaitForSeconds(1.5f);
+
                 continue;
             }
-            
-            //TODO Need to decide whether we will play defensively or offensively
-            
 
-            int lowHealthCharacterIndex = LowestHealthPlayerCharacterIndex();
-            int value = 0;
-            
+            //If we're on the first turn, first enemy, pick a random target
+            int targetIndex = currentTurn == 0 && i == 0 ? RandomCharacter() : LowestHealthPlayerCharacterIndex();
+
             //If we have less than 50% health & we can't potentially kill any character, prioritize heal
             //TODO Need to consider healing their teammates as well
             if (e.heal != null && e.CurrentHealthNormalized <= 0.5f)
             {
-                //TODO Heal
-                e.Heal(e.heal.GetValueRoll());
-                e.heal.ApplyEffectOnTarget(e);
-                
-                yield return new WaitForSeconds(2f);
-                
+                yield return StartCoroutine(EnemyPassive(e, e, e.block, () => e.Heal(e.heal.GetValueRoll())));
             }
             //If we can attack someone and kill them with a light attack do that
             else if (e.lightAttack != null &&
-                     playerCharacters[lowHealthCharacterIndex].CurrentHealth - e.lightAttack.valueRange.y <= 0)
+                     playerCharacters[targetIndex].CurrentHealth - e.lightAttack.valueRange.y <= 0)
             {
-                HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
-            
-                yield return new WaitForSeconds(1f);
-                value = e.lightAttack.GetValueRoll();
-                
-                playerCharacters[lowHealthCharacterIndex].DoDamage(e.lightAttack.GetValueRoll());
-                memberElements[lowHealthCharacterIndex].UpdateUI();
-                
-                if(value > 0)
-                    e.lightAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
-                
-                yield return new WaitForSeconds(2f);
+                yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.lightAttack));
             }
             //If we can attack and kill someone with a heavy attack, do that
             else if (e.heavyAttack != null &&
-                     playerCharacters[lowHealthCharacterIndex].CurrentHealth - e.heavyAttack.valueRange.y <= 0)
+                     playerCharacters[targetIndex].CurrentHealth - e.heavyAttack.valueRange.y <= 0)
             {
-                HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
-            
-                yield return new WaitForSeconds(1f);
-                value = e.lightAttack.GetValueRoll();
-                
-                playerCharacters[lowHealthCharacterIndex].DoDamage(e.heavyAttack.GetValueRoll());
-                memberElements[lowHealthCharacterIndex].UpdateUI();
-                
-                if(value > 0)
-                 e.heavyAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
-                
-                yield return new WaitForSeconds(2f);
+                yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.heavyAttack));
             }
             //If we can't kill anyone, default to heavy attack on lowest health target ,Then light attack or then block
             else
             {
-                if(e.heavyAttack)
+                if (e.heavyAttack)
                 {
-                    HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
-            
-                    yield return new WaitForSeconds(1f);
-                    value = e.lightAttack.GetValueRoll();
-                    
-                    //TODO Do Heavy Attack
-                    playerCharacters[lowHealthCharacterIndex].DoDamage(e.heavyAttack.GetValueRoll());
-                    memberElements[lowHealthCharacterIndex].UpdateUI();
-                    
-                    if(value > 0)
-                        e.heavyAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
-                
-                    yield return new WaitForSeconds(2f);
-                 }
-                else if(e.lightAttack)
-                {
-                    HighlightTarget(playerCharacters[lowHealthCharacterIndex]);
-            
-                    yield return new WaitForSeconds(1f);
-
-                    value = e.lightAttack.GetValueRoll();
-                    
-                    playerCharacters[lowHealthCharacterIndex].DoDamage(value);
-                    memberElements[lowHealthCharacterIndex].UpdateUI();
-                    
-                    if(value > 0)
-                        e.lightAttack.ApplyEffectOnTarget(playerCharacters[lowHealthCharacterIndex]);
-                
-                    yield return new WaitForSeconds(2f);
+                    yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.heavyAttack));
                 }
-                else if(e.block)
+                else if (e.lightAttack)
                 {
-                    e.Block();
-                    e.block.ApplyEffectOnTarget(e);
-                    yield return new WaitForSeconds(2f);
+                    yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.lightAttack));
+                }
+                else if (e.block)
+                {
+                    yield return StartCoroutine(EnemyPassive(e, e, e.block, () => e.Block()));
                 }
             }
-            
+
             e.EndTurn();
-            
-            
+
+
         }
-        
-        StartPlayerTurn();
+    }
+
+    private IEnumerator EnemyAttack(int index, CharacterBase target, AbilityScriptableObject ability)
+    {
+        HighlightTarget(target);
+
+        yield return new WaitForSeconds(1f);
+
+        var value = ability.GetValueRoll();
+
+        target.DoDamage(value);
+        memberElements[index].UpdateUI();
+
+        if (value > 0)
+            ability.ApplyEffectOnTarget(target);
+
+        yield return new WaitForSeconds(2f);
+
+        if (!IsAlive(playerCharacters))
+            StartCoroutine(ShowTurnTextCoroutine("Defeat", Color.red));
+    }
+
+    private IEnumerator EnemyPassive(CharacterBase caster, CharacterBase target, AbilityScriptableObject ability,
+                                     Action        onPreCall)
+    {
+        onPreCall?.Invoke();
+
+        ability.ApplyEffectOnTarget(target);
+        yield return new WaitForSeconds(2f);
     }
 
     private int LowestHealthPlayerCharacterIndex()
     {
         int lowest = 999;
-        int index = -1;
+        int index  = -1;
 
         for (int i = 0; i < playerCharacters.Count; i++)
         {
             if (playerCharacters[i].IsDead)
                 continue;
-            
+
             if (playerCharacters[i].CurrentHealth < lowest)
             {
                 lowest = playerCharacters[i].CurrentHealth;
-                index = i;
+                index  = i;
             }
         }
 
         return index;
     }
-    
+
+    private int RandomCharacter()
+    {
+        return Random.Range(0, playerCharacters.Count);
+    }
+
     //---------------------------------------------------------------------------------------//
 
     private void FinishCharacterTurn(CharacterBase character)
@@ -576,11 +601,6 @@ public class GameManager : MonoBehaviour
         memberElements[selectedCharacterIndex].SetActive(false);
 
         character.EndTurn();
-
-        if (IsCharacterAvailable())
-            SetGameState(GAMESTATE.CHARACTER_SELECT);
-        else
-            EndPlayerTurn();
 
     }
 
@@ -598,6 +618,7 @@ public class GameManager : MonoBehaviour
 
         return false;
     }
+
     private bool IsCharacterAvailable()
     {
         for (int i = 0; i < playerCharacters.Count; i++)
@@ -610,7 +631,18 @@ public class GameManager : MonoBehaviour
 
         return false;
     }
-    
+
+    private bool IsAlive(List<CharacterBase> list)
+    {
+        foreach (var character in list)
+        {
+            if (character.CurrentHealth > 0)
+                return true;
+        }
+
+        return false;
+    }
+
     //---------------------------------------------------------------------------------------//
     private void GenerateTargetList(AbilityScriptableObject ability, out List<CharacterBase> targets)
     {
@@ -622,54 +654,56 @@ public class GameManager : MonoBehaviour
                 //targets.AddRange(enemyCharacters);
                 foreach (var enemyCharacter in enemyCharacters)
                 {
-                    if(!enemyCharacter.IsDead)
+                    if (!enemyCharacter.IsDead)
                         targets.Add(enemyCharacter);
                 }
+
                 break;
             case TargetType.Friendly:
                 targets.AddRange(playerCharacters);
                 foreach (var character in playerCharacters)
                 {
-                    if(!character.IsDead)
+                    if (!character.IsDead)
                         targets.Add(character);
                 }
+
                 break;
             case TargetType.Self:
                 targets.Add(playerCharacters[selectedCharacterIndex]);
                 break;
         }
-        
-        if(ability.CanTargetSelf && ability.TargetType != TargetType.Self)
+
+        if (ability.CanTargetSelf && ability.TargetType != TargetType.Self)
             targets.Add(playerCharacters[selectedCharacterIndex]);
 
         targets = targets.Distinct().ToList();
 
     }
-    
+
     //---------------------------------------------------------------------------------------//
 
     private void SetActionButtonsActive(bool state)
     {
-        for(int i = 0; i < actionButtons.Count; i++)
+        for (int i = 0; i < actionButtons.Count; i++)
             actionButtons[i].gameObject.SetActive(state);
     }
-    
+
     //---------------------------------------------------------------------------------------//
 
-    private static int ClampListBounds(IList list,int index,  int direction)
+    private static int ClampListBounds(IList list, int index, int direction)
     {
         if (index + direction < 0)
             return list.Count - 1;
-        
-        
+
+
         if (index + direction >= list.Count)
             return 0;
-        
-        
+
+
         return index + direction;
     }
 
-    
+
 }
 
 struct ButtonText

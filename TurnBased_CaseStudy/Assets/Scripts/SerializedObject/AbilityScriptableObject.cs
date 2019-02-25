@@ -20,6 +20,8 @@ public class AbilityScriptableObject : ScriptableObject
 
 	public bool CanTargetSelf;
 
+	public int hitCount = 0;
+
 	public GameObject effectPrefab;
 	public Vector3 effectOffset = Vector3.zero;
 
