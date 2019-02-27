@@ -32,8 +32,8 @@ public class CharacterBase : MonoBehaviour
     
     //---------------------------------------------------------------------------------------//
 
-    [SerializeField]
-    protected TYPE attackType;
+    //[SerializeField]
+    public TYPE attackType;
     
     [Required, SerializeField]
     protected CharacterStats stats;

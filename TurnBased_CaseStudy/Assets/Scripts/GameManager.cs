@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(DamageController))]
 public class GameManager : MonoBehaviour
 {
     public enum GAMESTATE
@@ -23,7 +24,7 @@ public class GameManager : MonoBehaviour
     }
 
     //---------------------------------------------------------------------------------------//
-
+    [SerializeField, BoxGroup("Info"), ReadOnly]
     private GAMESTATE currentGamestate;
 
     [SerializeField, BoxGroup("Info"), ReadOnly]
@@ -102,9 +103,12 @@ public class GameManager : MonoBehaviour
 
     //---------------------------------------------------------------------------------------//
 
+    private DamageController _damageController;
+    
     // Start is called before the first frame update
     private void Start()
     {
+        _damageController = GetComponent<DamageController>();
         InitButtonUI();
         GeneratePartyUI();
 
@@ -142,6 +146,7 @@ public class GameManager : MonoBehaviour
             playerCharacters[i].StartTurn();
 
         SetGameState(GAMESTATE.CHARACTER_SELECT);
+        yield return StartCoroutine(ShowTurnTextCoroutine("Player Turn", Color.white));
 
         yield return  new WaitUntil(() => !IsCharacterAvailable());
         
@@ -153,11 +158,7 @@ public class GameManager : MonoBehaviour
 
         currentTurn++;
     }
-   //private void NextTurn()
-   //{
-   //    currentTurn++;
-   //    StartPlayerTurn();
-   //}
+    
     private void SetGameState(GAMESTATE newState)
     {
         currentGamestate = newState;
@@ -196,30 +197,6 @@ public class GameManager : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }
     }
-
-    //private void StartPlayerTurn()
-    //{
-    //    for (int i = 0; i < playerCharacters.Count; i++)
-    //        playerCharacters[i].StartTurn();
-//
-    //    StartCoroutine(ShowTurnTextCoroutine("Your Turn", Color.cyan));
-//
-    //    SetGameState(GAMESTATE.CHARACTER_SELECT);
-    //}
-
-    //private void EndPlayerTurn()
-    //{
-    //    Debug.LogError("Enemy Turn");
-    //    SetGameState(GAMESTATE.ENEMY_TURN);
-    //    
-    //    StartCoroutine(EnemyTurnCoroutine());
-//
-    //}
-
-    //private void EndEnemyTurn()
-    //{
-    //    
-    //}
 
     private IEnumerator ShowTurnTextCoroutine(string message, Color color)
     {
@@ -427,6 +404,10 @@ public class GameManager : MonoBehaviour
         {
             case AbilityType.LightAttack:
             case AbilityType.HeavyAttack:
+                value = Mathf.CeilToInt(value *
+                        _damageController.GetMultiplier(playerCharacters[selectedCharacterIndex].attackType,
+                        target.attackType));
+                
                 //Damage character, based on chance and on range
                 target.DoDamage(value);
                 if (value > 0)
@@ -462,6 +443,8 @@ public class GameManager : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }
 
+        playerCharacters[selectedCharacterIndex].EndTurn();
+        SetGameState(GAMESTATE.CHARACTER_SELECT);
     }
 
     //---------------------------------------------------------------------------------------//
@@ -508,24 +491,24 @@ public class GameManager : MonoBehaviour
             else if (e.lightAttack != null &&
                      playerCharacters[targetIndex].CurrentHealth - e.lightAttack.valueRange.y <= 0)
             {
-                yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.lightAttack));
+                yield return StartCoroutine(EnemyAttack(targetIndex, e,playerCharacters[targetIndex], e.lightAttack));
             }
             //If we can attack and kill someone with a heavy attack, do that
             else if (e.heavyAttack != null &&
                      playerCharacters[targetIndex].CurrentHealth - e.heavyAttack.valueRange.y <= 0)
             {
-                yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.heavyAttack));
+                yield return StartCoroutine(EnemyAttack(targetIndex, e,playerCharacters[targetIndex], e.heavyAttack));
             }
             //If we can't kill anyone, default to heavy attack on lowest health target ,Then light attack or then block
             else
             {
                 if (e.heavyAttack)
                 {
-                    yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.heavyAttack));
+                    yield return StartCoroutine(EnemyAttack(targetIndex, e,playerCharacters[targetIndex], e.heavyAttack));
                 }
                 else if (e.lightAttack)
                 {
-                    yield return StartCoroutine(EnemyAttack(targetIndex, playerCharacters[targetIndex], e.lightAttack));
+                    yield return StartCoroutine(EnemyAttack(targetIndex, e,playerCharacters[targetIndex], e.lightAttack));
                 }
                 else if (e.block)
                 {
@@ -534,18 +517,20 @@ public class GameManager : MonoBehaviour
             }
 
             e.EndTurn();
-
-
         }
     }
 
-    private IEnumerator EnemyAttack(int index, CharacterBase target, AbilityScriptableObject ability)
+    private IEnumerator EnemyAttack(int index, CharacterBase caster, CharacterBase target, AbilityScriptableObject ability)
     {
         HighlightTarget(target);
 
         yield return new WaitForSeconds(1f);
 
         var value = ability.GetValueRoll();
+        
+        value = Mathf.CeilToInt(value *
+                                _damageController.GetMultiplier(caster.attackType,
+                                    target.attackType));
 
         target.DoDamage(value);
         memberElements[index].UpdateUI();
