@@ -441,6 +441,15 @@ public class GameManager : MonoBehaviour
             case AbilityType.Poison:
                 target.Poison(ability);
                 break;
+            case AbilityType.AOE:
+
+                foreach (var enemyCharacter in enemyCharacters)
+                {
+                    enemyCharacter.DoDamage(ability.GetValueRoll());
+                    ability.ApplyEffectOnTarget(enemyCharacter);
+                }
+                
+                break;
             
             default:
                 throw new ArgumentOutOfRangeException();

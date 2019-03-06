@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cfabb3016063264f91efe820cff1255, type: 3}
   m_Name: RogueStats
   m_EditorClassIdentifier: 
-  startingHealth: 0
+  startingHealth: 50
   abilities:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: b0b9f12a075bf434087c27181a448ebd, type: 2}
+  - {fileID: 11400000, guid: 93d605d60ee70764cab03c7268a3e299, type: 2}
+  - {fileID: 11400000, guid: 70341a012fe6e6445ac4a2866c1f7c23, type: 2}

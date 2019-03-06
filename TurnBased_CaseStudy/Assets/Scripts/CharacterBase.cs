@@ -107,13 +107,13 @@ public class CharacterBase : MonoBehaviour
             case STATE.WAITING:
                 break;
             case STATE.STUNNED:
-                if (!stunGameObject)
-                {
-                    stunGameObject = Instantiate(_gameManager.stunEffectPrefab);
-                    stunGameObject.transform.position = transform.position + stun.effectOffset;
-                }
-                
-                stunGameObject.SetActive(true);
+               //if (!stunGameObject)
+               //{
+               //    stunGameObject = Instantiate(_gameManager.stunEffectPrefab);
+               //    stunGameObject.transform.position = transform.position + stun.effectOffset;
+               //}
+               //
+               //stunGameObject.SetActive(true);
                 break;
             case STATE.BLOCKING:
                 if (!shieldGameObject)

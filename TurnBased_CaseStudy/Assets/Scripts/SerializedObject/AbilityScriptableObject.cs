@@ -51,7 +51,8 @@ public enum AbilityType :int
 	Stun,
 	Heal,
 	Block,
-	Poison
+	Poison,
+	AOE
 }
 
 public enum TargetType
