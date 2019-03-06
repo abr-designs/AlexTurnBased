@@ -874,6 +874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d052009ce8d87d0499afbf7e949089c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGamestate: 0
   currentTurn: 0
   selectedIndex: 0
   selectedCharacterIndex: 0
@@ -931,6 +932,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6605f2fc6a031a48be392148cd0ab0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useMultiplier: 0
   multipliers:
   - casterType: 0
     targetType: 0

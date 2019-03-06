@@ -26,6 +26,9 @@ public class CharacterBase : MonoBehaviour
 
     protected STATE currentState;
 
+    protected int poisonTime = 0;
+    protected AbilityScriptableObject poisonProfile;
+
     protected int stunTime = 0;
 
     protected int blockCount = 0;
@@ -133,6 +136,22 @@ public class CharacterBase : MonoBehaviour
 
     public void StartTurn()
     {
+        if(IsDead)
+            return;
+        
+        if (poisonTime > 0)
+        {
+            poisonTime--;
+            DoDamage(poisonProfile.valueRange.x, true);
+            poisonProfile.ApplyEffectOnTarget(this);
+
+            if (poisonTime == 0)
+            {
+                poisonProfile = null;
+            }
+
+        }
+        
         if (currentState == STATE.STUNNED)
         {
             if(stunTime == 0)
@@ -142,8 +161,6 @@ public class CharacterBase : MonoBehaviour
                 stunTime--;
             }
         }
-        else if(IsDead)
-            return;
 
         turnDone = false;
     }
@@ -155,7 +172,7 @@ public class CharacterBase : MonoBehaviour
 
     //---------------------------------------------------------------------------------------//
     
-    public void DoDamage(int value)
+    public void DoDamage(int value, bool ignoreShield = false)
     {
         if (value == 0)
         {
@@ -165,7 +182,7 @@ public class CharacterBase : MonoBehaviour
         
         
         
-        if (currentState == STATE.BLOCKING)
+        if (currentState == STATE.BLOCKING && !ignoreShield)
         {
             blockCount--;
             
@@ -201,6 +218,19 @@ public class CharacterBase : MonoBehaviour
         SetCurrentState(STATE.STUNNED);
         stunTime = turns;
         Instantiate(_gameManager.risingTextPrefab).GetComponent<RisingText>().Init("Stunned", Color.white, Transform.position);
+    }
+
+    public void Poison(AbilityScriptableObject ability)
+    {
+        //TODO Going to need to consider having some sort of poison resist
+        if (ability.AbilityType != AbilityType.Poison)
+            return;
+
+        poisonProfile = ability;
+        poisonTime = poisonProfile.hitCount;
+        
+        DoDamage(poisonProfile.valueRange.x * 2, true);
+        poisonProfile.ApplyEffectOnTarget(this);
     }
 
     public void ShowStunnedState()

@@ -142,21 +142,24 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator GameLoop()
     {
-        for (int i = 0; i < playerCharacters.Count; i++)
-            playerCharacters[i].StartTurn();
+        while (IsAlive(playerCharacters) && IsAlive(enemyCharacters))
+        {
+            for (int i = 0; i < playerCharacters.Count; i++)
+                playerCharacters[i].StartTurn();
 
-        SetGameState(GAMESTATE.CHARACTER_SELECT);
-        yield return StartCoroutine(ShowTurnTextCoroutine("Player Turn", Color.white));
+            SetGameState(GAMESTATE.CHARACTER_SELECT);
+            yield return StartCoroutine(ShowTurnTextCoroutine("Player Turn", Color.white));
 
-        yield return  new WaitUntil(() => !IsCharacterAvailable());
-        
-        Debug.LogError("Enemy Turn");
-        SetGameState(GAMESTATE.ENEMY_TURN);
-        yield return StartCoroutine(ShowTurnTextCoroutine("Enemy Turn", Color.red));
+            yield return new WaitUntil(() => !IsCharacterAvailable());
 
-        yield return StartCoroutine(EnemyTurnCoroutine());
+            Debug.LogError("Enemy Turn");
+            SetGameState(GAMESTATE.ENEMY_TURN);
+            yield return StartCoroutine(ShowTurnTextCoroutine("Enemy Turn", Color.red));
 
-        currentTurn++;
+            yield return StartCoroutine(EnemyTurnCoroutine());
+
+            currentTurn++;
+        }
     }
     
     private void SetGameState(GAMESTATE newState)
@@ -385,9 +388,6 @@ public class GameManager : MonoBehaviour
 
             actionButtonTexts[i].Text = character.Abilities[i].Name;
         }
-
-        //TODO Need to spawn all button options for the character Abilities
-        //TODO Need to display character name that has been selected
     }
 
     private void HighlightTarget(CharacterBase character)
@@ -436,9 +436,12 @@ public class GameManager : MonoBehaviour
             case AbilityType.Block:
                 //Sets target to be blocking
                 target.Block();
-
-
                 break;
+            
+            case AbilityType.Poison:
+                target.Poison(ability);
+                break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -451,10 +454,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EnemyTurnCoroutine()
     {
-
-
         for (int i = 0; i < enemyCharacters.Count; i++)
         {
+            Debug.Log($"Start {i}");
+            
             var e = enemyCharacters[i] as EnemyCharacter;
 
             if (e == null)
@@ -582,7 +585,7 @@ public class GameManager : MonoBehaviour
 
     private void FinishCharacterTurn(CharacterBase character)
     {
-        //TODO Need to check if all characters have finished their turn
+        //TODO Need to check if all characters have finished their turn, and display warning otherwise
         memberElements[selectedCharacterIndex].SetActive(false);
 
         character.EndTurn();

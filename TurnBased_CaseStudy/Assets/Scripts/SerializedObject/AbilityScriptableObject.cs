@@ -44,13 +44,14 @@ public class AbilityScriptableObject : ScriptableObject
 
 }
 
-public enum AbilityType
+public enum AbilityType :int
 {
 	LightAttack,
 	HeavyAttack,
 	Stun,
 	Heal,
-	Block
+	Block,
+	Poison
 }
 
 public enum TargetType
